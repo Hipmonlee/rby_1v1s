@@ -214,6 +214,24 @@ class Lapras(Pokemon):
     TYPES = ('Water', 'Ice')
     NAME = 'Lapras'
 
+class Articuno(Pokemon):
+    BASE_HP = 90
+    BASE_ATTACK = 85
+    BASE_DEFENCE = 100
+    BASE_SPECIAL = 125
+    BASE_SPEED = 85
+    TYPES = ('Ice', 'Flying')
+    NAME = 'Articuno'
+
+class Moltres(Pokemon):
+    BASE_HP = 90
+    BASE_ATTACK = 100
+    BASE_DEFENCE = 90
+    BASE_SPECIAL = 125
+    BASE_SPEED = 90
+    TYPES = ('Fire', 'Flying')
+    NAME = 'Moltres'
+
 class Starmie(Pokemon):
     BASE_HP = 60
     BASE_ATTACK = 75
@@ -240,6 +258,33 @@ class Tauros(Pokemon):
     BASE_SPEED = 110
     TYPES = ('Normal',)
     NAME = 'Tauros'
+
+class Zapdos(Pokemon):
+    BASE_HP = 90
+    BASE_ATTACK = 90
+    BASE_DEFENCE = 85
+    BASE_SPECIAL = 125
+    BASE_SPEED = 100
+    TYPES = ('Electric', 'Flying')
+    NAME = 'Zapdos'
+
+class Clefable(Pokemon):
+    BASE_HP = 95
+    BASE_ATTACK = 70
+    BASE_DEFENCE = 73
+    BASE_SPECIAL = 85
+    BASE_SPEED = 60
+    TYPES = ('Normal',)
+    NAME = 'Clefable'
+
+class Snorlax(Pokemon):
+    BASE_HP = 160
+    BASE_ATTACK = 110
+    BASE_DEFENCE = 65
+    BASE_SPECIAL = 65
+    BASE_SPEED = 35
+    TYPES = ('Normal',)
+    NAME = 'Snorlax'
 
 class Chansey(Pokemon):
     BASE_HP = 250
@@ -363,28 +408,61 @@ class BurnMove(Move):
             opponent.status_mod = {'attack': 2}
             logging.debug('{} is Burnt!'.format(opponent.nickname))
 
+class SelfDestruct(Move):
+    BASE_POWER = 130
+    TYPE = 'Normal'
+    EXPLOSION = 'True'
+    NAME = 'Self-Destruct'
+
+    def main_effect(self, user, opponent):
+        user.hp = 0
+
 class BodySlam(ParalysingMove):
     BASE_POWER = 85
     TYPE = 'Normal'
     NAME = 'Body Slam'
-    EFFECT_CHANCE = 77
+    EFFECT_CHANCE = 76
     MAX_PP = 24
+
+class MegaKick(ParalysingMove):
+    BASE_POWER = 120
+    TYPE = 'Normal'
+    NAME = 'Mega Kick'
+    MAX_PP = 8
+    ACCURACY = 179
+
+class DrillPeck(Move):
+    BASE_POWER = 80
+    TYPE = 'Flying'
+    NAME = 'Drill Peck'
+    MAX_PP = 32
 
 class Blizzard(FreezingMove):
     BASE_POWER = 120
     TYPE = 'Ice'
     NAME = 'Blizzard'
-    EFFECT_CHANCE = 26
+    EFFECT_CHANCE = 25
     ACCURACY = 231
     MAX_PP = 8
+    SPECIAL = True
+
+class IceBeam(FreezingMove):
+    BASE_POWER = 95
+    TYPE = 'Ice'
+    NAME = 'Blizzard'
+    EFFECT_CHANCE = 25
+    ACCURACY = 255
+    MAX_PP = 16
+    SPECIAL = True
 
 class FireBlast(BurnMove):
     BASE_POWER = 120
     TYPE = 'Fire'
     NAME = 'Fire Blast'
-    EFFECT_CHANCE = 77
+    EFFECT_CHANCE = 76
     ACCURACY = 218
     MAX_PP = 8
+    SPECIAL = True
 
 class Psychic(Move):
     BASE_POWER = 90
@@ -393,6 +471,7 @@ class Psychic(Move):
     EFFECT_CHANCE = 76
     ACCURACY = 255
     MAX_PP = 16
+    SPECIAL = True
 
     def side_effect(self, user, opponent):
         logging.debug("{}'s special fell!".format(opponent.nickname))
@@ -406,7 +485,7 @@ class HyperBeam(Move):
     BASE_POWER = 150
     TYPE = 'Normal'
     NAME = 'Hyper Beam'
-    EFFECT_CHANCE = None
+    ALWAYS_EFFECT = True
     MAX_PP = 8
 
     def side_effect(self, user, opponent):
@@ -441,6 +520,15 @@ class Thunderbolt(ParalysingMove):
     SPECIAL = True
     MAX_PP = 24
 
+class Thunder(ParalysingMove):
+    BASE_POWER = 120
+    TYPE = 'Electric'
+    NAME = 'Thunder'
+    EFFECT_CHANCE = 26 # not sure if effect chances should be out of 255 or not? If so 25 or 26??
+    SPECIAL = True
+    MAX_PP = 24
+    ACCURACY = 179
+
 class SeismicToss(Move):
     TYPE = 'Fighting'
     NAME = 'Seismic Toss'
@@ -450,6 +538,18 @@ class SeismicToss(Move):
     def do_damage(self, user, opponent):
         opponent.hp -= user.level
         logging.debug('{} damage!'.format(user.level))
+
+class Amnesia(Move):
+    NAME = 'Amnesia'
+    MAX_PP = 32
+
+    def main_effect(self, user, opponent):
+        logging.debug("{}'s special greatly rose!".format(user.nickname))
+        user.raise_stat('special', 2)
+        if opponent.status == 'PAR':
+            opponent.status_mod['speed'] *= 4
+        elif opponent.status == 'BRN':
+            opponent.status_mod['attack'] *= 2
 
 class Recover(Move):
     NAME = 'Recover'
