@@ -26,7 +26,7 @@ def effectiveness(move, opponent):
     result = 4
     for t in opponent.TYPES:
         opponent_i = INDEXES.index(t)
-        result = (result * TYPE_CHART[move_i][opponent_i]) / 4
+        result = (result * TYPE_CHART[move_i][opponent_i]) // 4
     if result == 0:
         logging.debug('It doesnt affect {}!'.format(opponent.nickname))
     elif result < 4:
@@ -99,7 +99,7 @@ class Pokemon:
             self.nickname = nickname
         else:
             self.nickname = self.NAME
-        self.max_hp = 10 + level + (((self.BASE_HP + 15) * 2 + 63) * level) / 100
+        self.max_hp = 10 + level + (((self.BASE_HP + 15) * 2 + 63) * level) // 100
         self.hp = self.max_hp
         self.moves = {move.NAME: move() for move in moves}
         self.stats = {
@@ -137,9 +137,9 @@ class Pokemon:
         if stat not in self.stats:
             raise ValueError('bad stat name')
         value = self.stats[stat]
-        value = value / self.status_mod.get(stat, 1)
+        value = value // self.status_mod.get(stat, 1)
         mod_numerator, mod_denominator = self.stat_mods[stat]
-        value = (value * mod_numerator) / mod_denominator
+        value = (value * mod_numerator) // mod_denominator
         return value
 
     def raise_stat(self, stat, levels):
@@ -162,7 +162,7 @@ class Pokemon:
 
     def critical_hit(self, high_ch=False):
         self.ch_attempts += 1
-        target = self.BASE_SPEED / 2
+        target = self.BASE_SPEED // 2
         if high_ch:
             target = target * 8
         target = min(target, 255)
@@ -201,10 +201,10 @@ class Pokemon:
                 return
         move.use(self, opponent)
         if self.status == 'BRN':
-            self.hp -= self.max_hp / 16
+            self.hp -= self.max_hp // 16
 
     def _calc_stat(self, level, base_stat):
-        return 5 + (((base_stat + 15) * 2 + 63) * level) / 100
+        return 5 + (((base_stat + 15) * 2 + 63) * level) // 100
 
 class Lapras(Pokemon):
     BASE_HP = 130
@@ -302,8 +302,8 @@ class Move:
         elif opponent.reflect:
             defence = (defence * 2) % 1024
         if self.EXPLOSION:
-            attack = attack / 2
-            defence = defence / 4
+            attack = attack // 2
+            defence = defence // 4
         if crit:
             level = user.level * 2
         else:
@@ -314,12 +314,12 @@ class Move:
             stab = 2
         if rand_val is None:
             rand_val = random.randint(217, 255)
-        damage = (level * 2) / 5
-        damage = (damage * attack * basepower) / defence
-        damage = damage / 50 + 2
-        damage = (damage * stab) / 2
-        damage = (damage * effectiveness(self, opponent)) / 4
-        damage = (damage * rand_val) / 255
+        damage = (level * 2) // 5
+        damage = (damage * attack * basepower) // defence
+        damage = damage // 50 + 2
+        damage = (damage * stab) // 2
+        damage = (damage * effectiveness(self, opponent)) // 4
+        damage = (damage * rand_val) // 255
         return max(damage, 1)
 
     def do_damage(self, user, opponent):
@@ -331,7 +331,7 @@ class Move:
         damage = self.calc_damage(user, opponent, crit)
         opponent.hp -= damage
         if self.RECOIL:
-            user.hp -= damage / 4
+            user.hp -= damage // 4
         logging.debug('{} damage'.format(damage))
 
     def side_effect(self, user, opponent):
