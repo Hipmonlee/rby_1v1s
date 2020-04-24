@@ -184,13 +184,12 @@ class Pokemon:
             logging.debug('{} is frozen solid!'.format(self.nickname))
             return
         if self.status == 'SLP':
-            if random.randint(1, 8) < self.sleep_count:
+            if self.sleep_count == 0:
                 self.status = None
-                self.sleep_count = 0
                 logging.debug('{} woke up!'.format(self.nickname))
                 return
             else:
-                self.sleep_count += 1
+                self.sleep_count -= 1
                 logging.debug('{} is fast asleep!'.format(self.nickname))
                 return
         if self.status == 'PAR':
@@ -458,7 +457,19 @@ class Recover(Move):
 
     def main_effect(self, user, opponent):
         if user.max_hp - user.hp % 256 != 0:
-            user.hp = min(user.max_hp, user.hp + user.max_hp / 2)
+            user.hp = min(user.max_hp, user.hp + user.max_hp // 2)
+        else:
+            logging.debug('But it Failed!')
+
+class Rest(Move):
+    NAME = 'Rest'
+    MAX_PP = 16
+
+    def main_effect(self, user, opponent):
+        if user.max_hp - user.hp % 256 != 0:
+            user.hp = user.max_hp
+            user.status = 'SL{'
+            user.sleep_count = 1
         else:
             logging.debug('But it Failed!')
 
