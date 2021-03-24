@@ -6,26 +6,30 @@ def t1_select_move(user, opponent):
     if user.hp <= 188:
         attack = user.get_move(HyperBeam.NAME)
     elif user.hp == 353:
-        attack = user.get_move(FireBlast.NAME)
+        attack = user.get_move(BodySlam.NAME)
     elif opponent.hp >= 188:
-        attack = user.get_move(FireBlast.NAME)
+        attack = user.get_move(BodySlam.NAME)
+    elif user.status == 'BRN':
+        attack = user.get_move(Blizzard.NAME)
     else:
         attack = user.get_move(HyperBeam.NAME)
     return attack
 
 def t2_select_move(user, opponent):
     attack = None
-    if user.hp <= 188:
+    if user.hp <= 188 and user.status != 'BRN':
         attack = user.get_move(HyperBeam.NAME)
     elif user.status == 'BRN':
-        attack = user.get_move(Blizzard.NAME)
-    elif opponent.hp >= 188:
+        attack = user.get_move(FireBlast.NAME)
+    elif opponent.hp > 350:
         attack = user.get_move(BodySlam.NAME)
+    elif opponent.hp >= 188:
+        attack = user.get_move(Blizzard.NAME)
     else:
         attack = user.get_move(HyperBeam.NAME)
     return attack
 
-iterations = 10000
+iterations = 100000
 #logging.basicConfig(level=logging.DEBUG)
 if iterations == 1:
     logging.basicConfig(level=logging.DEBUG)
@@ -47,8 +51,5 @@ print('Tauros 1 wins {}%'.format(t1_percentage))
 print('Tauros 2 wins {}%'.format(t2_percentage))
 print('Draws {}%'.format(draw_percentage))
 
-# So Fireblast is marginally, and I mean seriously marginally better than
-# bodyslam in a tauros 1v1. However! Fireblast probably gives you chances to
-# switch without playing out the 1v1 entirely. So it has that advantage. But,
-# that will give Tauros a chance to inflict more damage on the rest of your
-# team. Honestly, I dont think fireblast tauros is great.
+# Turns out fireblast and blizzard are special moves, not physical. which makes
+# things a bit worse for fireblast tauros. Takeaway - probably shouldnt use it

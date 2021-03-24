@@ -241,6 +241,24 @@ class Starmie(Pokemon):
     TYPES = ('Water', 'Psychic')
     NAME = 'Starmie'
 
+class Jynx(Pokemon):
+    BASE_HP = 65
+    BASE_ATTACK = 50
+    BASE_DEFENCE = 35
+    BASE_SPECIAL = 95
+    BASE_SPEED = 95
+    TYPES = ('Ice', 'Psychic')
+    NAME = 'Jynx'
+
+class Exeggutor(Pokemon):
+    BASE_HP = 95
+    BASE_ATTACK = 95
+    BASE_DEFENCE = 85
+    BASE_SPECIAL = 125
+    BASE_SPEED = 55
+    TYPES = ('Grass', 'Psychic')
+    NAME = 'Exeggutor'
+
 class Alakazam(Pokemon):
     BASE_HP = 55
     BASE_ATTACK = 50
@@ -561,6 +579,27 @@ class Recover(Move):
         else:
             logging.debug('But it Failed!')
 
+class SleepMove(Move):
+    def side_effect(self, user, opponent):
+        if opponent.status is not None:
+            logging.debug('But it Failed!')
+        else:
+            logging.debug(f'{opponent.nickname} fell asleep!')
+            opponent.status = 'SLP'
+            opponent.sleep_count = random.randint(0, 6)
+
+class LovelyKiss(SleepMove):
+    NAME = 'Lovely Kiss'
+    ACCURACY = 191
+    ALWAYS_EFFECT = True
+    MAX_PP = 16
+
+class SleepPowder(SleepMove):
+    NAME = 'Sleep Powder'
+    ACCURACY = 191
+    ALWAYS_EFFECT = True
+    MAX_PP = 16
+
 class Rest(Move):
     NAME = 'Rest'
     MAX_PP = 16
@@ -568,7 +607,7 @@ class Rest(Move):
     def main_effect(self, user, opponent):
         if user.max_hp - user.hp % 256 != 0:
             user.hp = user.max_hp
-            user.status = 'SL{'
+            user.status = 'SLP'
             user.sleep_count = 1
         else:
             logging.debug('But it Failed!')
